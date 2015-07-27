@@ -115,15 +115,17 @@ app.post('/signup',
             console.log(found, 'exists already');
             res.render('login');
           } else {
-            var user = new User({
-              username: username,
-              password: password
-            });
+            util.encryptPWD(password, function(hash) {
+              var user = new User({
+                username: username,
+                password: hash
+              });
 
-            user.save().then(function(newUser) {
-              req.session.user = true;
-              res.redirect('create');
-            });
+              user.save().then(function(newUser) {
+                req.session.user = true;
+                res.redirect('create');
+              });
+            })
           }
         })
     }
@@ -145,17 +147,18 @@ app.post('/login',
     }).fetch().then(function(found) {
       if (found) {
         console.log(found, 'exists, check of valid password');
-        if (found.attributes.password === password) {
-          res.redirect('/');
-        } else {
-          res.render('login');
-        }
+
+        util.checkPWD(found, password, function(match) {
+          if (match) {
+            res.redirect('/')
+          } else {
+            res.render('login');
+          }
+        })
       } else {
         console.log(username, ' does not yet exist');
         res.render('signup')
       }
-      // fallback? 
-      res.render('login');
     });
   });
 
