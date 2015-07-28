@@ -9,7 +9,8 @@ var Click = require('../app/models/click');
 var util = require('../lib/utility');
 
 
-module.exports = function(app) {
+module.exports = function(app, passport) {
+
 
   app.get('/',
     function(req, res) {
@@ -71,6 +72,7 @@ module.exports = function(app) {
       });
     });
 
+
   app.get('/signup',
     function(req, res) {
       res.render('signup', {
@@ -79,50 +81,57 @@ module.exports = function(app) {
       });
     });
 
-  app.post('/signup',
-    function(req, res) {
-      console.log(req.body);
+  app.post('/signup', passport.authenticate('local-register', {
+    successRedirect: '/',
+    successFlase: true,
+    failureRedirect: '/signup',
+    failureFlash: true
+  }));
 
-      var username = req.body.username;
-      var password = req.body.password;
+  // app.post('/signup',
+  //   function(req, res) {
+  //     console.log(req.body);
 
-      if (!util.isValidEmail(username)) {
-        console.log('Not a valid email: ', username);
-        res.render('signup', {
-          data: {
-            warning: 'Not a valid email.'
-          },
-          session: req.session
-        });
-      } else {
-        new User({
-            username: username
-          })
-          .fetch()
-          .then(function(found) {
-            if (found) {
-              res.render('login', {
-                data: {
-                  warning: 'This email is already registered.'
-                },
-                session: req.session
-              });
-            } else {
-              util.encryptPWD(password, function(hash) {
-                var user = new User({
-                  username: username,
-                  password: hash
-                });
+  //     var username = req.body.username;
+  //     var password = req.body.password;
 
-                user.save().then(function(newUser) {
-                  req.session.user = true;
-                  res.redirect('create');
-                });
-              })
-            }
-          })
-      }
-    });
+  //     if (!util.isValidEmail(username)) {
+  //       console.log('Not a valid email: ', username);
+  //       res.render('signup', {
+  //         data: {
+  //           warning: 'Not a valid email.'
+  //         },
+  //         session: req.session
+  //       });
+  //     } else {
+  //       new User({
+  //           username: username
+  //         })
+  //         .fetch()
+  //         .then(function(found) {
+  //           if (found) {
+  //             res.render('login', {
+  //               data: {
+  //                 warning: 'This email is already registered.'
+  //               },
+  //               session: req.session
+  //             });
+  //           } else {
+  //             util.encryptPWD(password, function(hash) {
+  //               var user = new User({
+  //                 username: username,
+  //                 password: hash
+  //               });
+
+  //               user.save().then(function(newUser) {
+  //                 req.session.user = true;
+  //                 res.redirect('create');
+  //               });
+  //             })
+  //           }
+  //         })
+  //     }
+  //   });
 
   app.get('/login',
     function(req, res) {
@@ -132,39 +141,47 @@ module.exports = function(app) {
       });
     });
 
-  app.post('/login',
-    function(req, res) {
+  app.post('/login', passport.authenticate('local-login', {
+    successRedirect: '/',
+    successFlase: true,
+    failureRedirect: '/login',
+    failureFlash: true
+  }));
 
-      var username = req.body.username;
-      var password = req.body.password;
+  // app.post('/login',
+  //   function(req, res) {
 
-      new User({
-        username: username
-      }).fetch().then(function(found) {
-        if (found) {
-          util.checkPWD(found, password, function(match) {
-            if (match) {
-              req.session.user = true;
-              res.redirect('create')
-            } else {
-              res.render('login', {
-                data: {
-                  warning: 'Please enter correct email & password credentials'
-                }
-              });
-            }
-          })
-        } else {
-          res.render('signup', {
-            data: {
-              warning: 'Please enter correct email & password credentials'
-            }
-          })
-        }
-      });
-    });
+  //     var username = req.body.username;
+  //     var password = req.body.password;
+
+  //     new User({
+  //       username: username
+  //     }).fetch().then(function(found) {
+  //       if (found) {
+  //         util.checkPWD(found, password, function(match) {
+  //           if (match) {
+  //             req.session.user = true;
+  //             res.redirect('create')
+  //           } else {
+  //             res.render('login', {
+  //               data: {
+  //                 warning: 'Please enter correct email & password credentials'
+  //               }
+  //             });
+  //           }
+  //         })
+  //       } else {
+  //         res.render('signup', {
+  //           data: {
+  //             warning: 'Please enter correct email & password credentials'
+  //           }
+  //         })
+  //       }
+  //     });
+  //   });
 
   app.get('/logout', function(req, res) {
+    req.logout();
     req.session.user = false;
     res.redirect('/');
   })
