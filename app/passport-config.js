@@ -22,7 +22,6 @@ module.exports = function(passport) {
     password: 'password',
     passReqToCallback: true
   }, function(req, username, password, done) {
-    console.log(req, username, password);
     new User({
       username: username
     }).fetch().then(function(match) {
@@ -30,7 +29,7 @@ module.exports = function(passport) {
         console.log('user exists');
 
         return done(null, false, {
-          message: 'user exists already'
+          message: 'A user with this email address already exists.'
         });
 
       } else {
@@ -43,13 +42,12 @@ module.exports = function(passport) {
 
           user.save().then(function(newUser) {
             done(null, newUser, {
-              message: 'new user created'
+              message: 'New user created.'
             });
           });
         })
       }
     })
-
   }));
 
   passport.use('local-login', new LocalStrategy({
@@ -58,22 +56,18 @@ module.exports = function(passport) {
       passReqToCallback: true
     },
     function(req, username, password, done) {
-      console.log(req, username, password);
       new User({
         username: username
       }).fetch().then(function(user) {
         if (user) {
-          console.log('user exists', user);
           return done(null, user, {
-            message: 'user logged in'
+            message: 'Welcome back.'
           });
         } else {
-          console.log('unknown user');
           return done(null, false, {
-            message: 'unknown user'
+            message: 'Login failed. Please try again'
           });
         }
       })
     }));
-
 }

@@ -8,13 +8,12 @@ var Click = require('../app/models/click');
 
 var util = require('../lib/utility');
 
-
 module.exports = function(app, passport) {
-
 
   app.get('/',
     function(req, res) {
       res.render('index', {
+        messages: req.flash(),
         data: {},
         session: req.session
       });
@@ -22,7 +21,9 @@ module.exports = function(app, passport) {
 
   app.get('/create',
     function(req, res) {
+
       res.render('index', {
+        messages: req.flash(),
         data: {},
         session: req.session
       });
@@ -76,6 +77,7 @@ module.exports = function(app, passport) {
   app.get('/signup',
     function(req, res) {
       res.render('signup', {
+        messages: req.flash(),
         data: {},
         session: req.session
       });
@@ -83,59 +85,15 @@ module.exports = function(app, passport) {
 
   app.post('/signup', passport.authenticate('local-register', {
     successRedirect: '/',
-    successFlase: true,
+    successFlash: true,
     failureRedirect: '/signup',
     failureFlash: true
   }));
 
-  // app.post('/signup',
-  //   function(req, res) {
-  //     console.log(req.body);
-
-  //     var username = req.body.username;
-  //     var password = req.body.password;
-
-  //     if (!util.isValidEmail(username)) {
-  //       console.log('Not a valid email: ', username);
-  //       res.render('signup', {
-  //         data: {
-  //           warning: 'Not a valid email.'
-  //         },
-  //         session: req.session
-  //       });
-  //     } else {
-  //       new User({
-  //           username: username
-  //         })
-  //         .fetch()
-  //         .then(function(found) {
-  //           if (found) {
-  //             res.render('login', {
-  //               data: {
-  //                 warning: 'This email is already registered.'
-  //               },
-  //               session: req.session
-  //             });
-  //           } else {
-  //             util.encryptPWD(password, function(hash) {
-  //               var user = new User({
-  //                 username: username,
-  //                 password: hash
-  //               });
-
-  //               user.save().then(function(newUser) {
-  //                 req.session.user = true;
-  //                 res.redirect('create');
-  //               });
-  //             })
-  //           }
-  //         })
-  //     }
-  //   });
-
   app.get('/login',
     function(req, res) {
       res.render('login', {
+        messages: req.flash('error'),
         data: {},
         session: req.session
       });
@@ -143,46 +101,14 @@ module.exports = function(app, passport) {
 
   app.post('/login', passport.authenticate('local-login', {
     successRedirect: '/',
-    successFlase: true,
+    successFlash: true,
     failureRedirect: '/login',
     failureFlash: true
   }));
 
-  // app.post('/login',
-  //   function(req, res) {
-
-  //     var username = req.body.username;
-  //     var password = req.body.password;
-
-  //     new User({
-  //       username: username
-  //     }).fetch().then(function(found) {
-  //       if (found) {
-  //         util.checkPWD(found, password, function(match) {
-  //           if (match) {
-  //             req.session.user = true;
-  //             res.redirect('create')
-  //           } else {
-  //             res.render('login', {
-  //               data: {
-  //                 warning: 'Please enter correct email & password credentials'
-  //               }
-  //             });
-  //           }
-  //         })
-  //       } else {
-  //         res.render('signup', {
-  //           data: {
-  //             warning: 'Please enter correct email & password credentials'
-  //           }
-  //         })
-  //       }
-  //     });
-  //   });
-
   app.get('/logout', function(req, res) {
     req.logout();
-    req.session.user = false;
+    // req.session.user = false;
     res.redirect('/');
   })
 
@@ -191,7 +117,9 @@ module.exports = function(app, passport) {
       code: req.params[0]
     }).fetch().then(function(link) {
       if (!link) {
-        res.redirect('/');
+        res.redirect('/', {
+          messages: req.flash()
+        });
       } else {
         var click = new Click({
           link_id: link.get('id')
