@@ -6,4 +6,5 @@ var User = db.Model.extend({
   tableName: 'users'
 });
 
-module.exports = User;
+
+module.exports = User

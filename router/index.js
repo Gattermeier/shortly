@@ -12,6 +12,7 @@ module.exports = function(app, passport) {
 
   app.get('/',
     function(req, res) {
+      console.log(req.session);
       res.render('index', {
         messages: req.flash(),
         data: {},
@@ -21,7 +22,6 @@ module.exports = function(app, passport) {
 
   app.get('/create',
     function(req, res) {
-
       res.render('index', {
         messages: req.flash(),
         data: {},
@@ -73,7 +73,6 @@ module.exports = function(app, passport) {
       });
     });
 
-
   app.get('/signup',
     function(req, res) {
       res.render('signup', {
@@ -106,9 +105,28 @@ module.exports = function(app, passport) {
     failureFlash: true
   }));
 
+
+  app.get('/auth/github',
+    passport.authenticate('github', {
+      scope: ['user:email']
+    }),
+    function(req, res) {});
+
+  app.get('/auth/github/callback',
+    passport.authenticate('github', {
+      failureRedirect: '/login',
+      failureFlash: true,
+      successRedirect: '/',
+      successFlash: true
+    }),
+    function(req, res) {
+      console.log('Github authenticated, ', req.session.passport.user);
+      //  here it is loosing the session .. 
+      // res.redirect('/');
+    });
+
   app.get('/logout', function(req, res) {
     req.logout();
-    // req.session.user = false;
     res.redirect('/');
   })
 

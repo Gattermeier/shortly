@@ -1,19 +1,27 @@
 var LocalStrategy = require('passport-local').Strategy;
+var GitHubStrategy = require('passport-github2').Strategy;
+// MODIFY
+var GITHUB_CLIENT_ID = "249fd767df9892664c34"
+var GITHUB_CLIENT_SECRET = "94733207a40f34481cd195ac9144191417899f49";
+var CALLBACK_URL = "http://127.0.0.1:4568/auth/github/callback";
+
 var User = require('./models/user');
+
 var util = require('../lib/utility');
 
 module.exports = function(passport) {
 
   passport.serializeUser(function(user, done) {
-    done(null, user);
+    done(null, user.id);
   });
 
-  passport.deserializeUser(function(user, done) {
-    var username = user.username;
+  passport.deserializeUser(function(id, done) {
     new User({
-      username: username
+      id: id
     }).fetch().then(function(user) {
-      done(null, user);
+      if (user) {
+        done(null, user);
+      }
     })
   });
 
@@ -28,7 +36,7 @@ module.exports = function(passport) {
       if (match) {
         console.log('user exists');
 
-        return done(null, false, {
+        done(null, false, {
           message: 'A user with this email address already exists.'
         });
 
@@ -60,7 +68,7 @@ module.exports = function(passport) {
         username: username
       }).fetch().then(function(user) {
         if (user) {
-          return done(null, user, {
+          done(null, user, {
             message: 'Welcome back.'
           });
         } else {
@@ -70,4 +78,30 @@ module.exports = function(passport) {
         }
       })
     }));
+
+  passport.use(new GitHubStrategy({
+      clientID: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+      callbackURL: CALLBACK_URL
+    },
+    function(accessToken, refreshToken, profile, done) {
+      new User({
+        githubId: profile.id
+      }).fetch().then(function(user) {
+        if (user) {
+          console.log('Existing user: ', user)
+          done(null, user);
+        } else {
+          var user = new User({
+            githubId: profile.id
+          });
+
+          user.save().then(function(newUser) {
+            console.log('New user: ', newUser);
+            done(null, newUser);
+          })
+        }
+      });
+    }
+  ));
 }

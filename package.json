@@ -25,11 +25,14 @@
     "express-session": "^1.7.2",
     "forever": "^0.10.11",
     "knex": "~0.5.7",
+    "method-override": "^2.3.4",
     "mocha": "^1.17.1",
     "nodemon": "^1.2.1",
     "passport": "^0.2.2",
+    "passport-github2": "^0.1.9",
     "passport-local": "^1.0.0",
     "request": "^2.34.0",
-    "sqlite3": "~3.0.5"
+    "sqlite3": "~3.0.5",
+    "underscore": "^1.8.3"
   }
 }

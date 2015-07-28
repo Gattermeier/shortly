@@ -16,10 +16,12 @@ var db = Bookshelf.initialize({
 db.knex.schema.hasTable('users').then(function(exists) {
   if (!exists) {
     db.knex.schema.createTable('users', function(user) {
-      user.string('username').primary();
+      user.increments('id').primary();
+      user.string('username');
       user.string('password', 255);
+      user.string('githubId', 255);
     }).then(function(table) {
-      console.log('Created Table ', table);
+      console.log('Created users table');
     })
   }
 })
@@ -35,7 +37,7 @@ db.knex.schema.hasTable('urls').then(function(exists) {
       link.integer('visits');
       link.timestamps();
     }).then(function(table) {
-      console.log('Created Table', table);
+      console.log('Created urls table');
     });
   }
 });
@@ -47,14 +49,9 @@ db.knex.schema.hasTable('clicks').then(function(exists) {
       click.integer('link_id');
       click.timestamps();
     }).then(function(table) {
-      console.log('Created Table', table);
+      console.log('Created clicks table');
     });
   }
 });
-
-/************************************************************/
-// Add additional schema definitions below
-/************************************************************/
-
 
 module.exports = db;
