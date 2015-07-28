@@ -1,7 +1,7 @@
 {
-  "name": "shortly-express",
-  "version": "0.0.1",
-  "description": "shortly using express",
+  "name": "shortly",
+  "version": "0.0.2",
+  "description": "URL shortening app",
   "main": "shortly.js",
   "repository": "",
   "license": "Proprietary",
