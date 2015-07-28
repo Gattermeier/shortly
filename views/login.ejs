@@ -1,6 +1,10 @@
 
-<form class="col-xs-12 col-sm-4" action="/login" method="post">
+<div class="row"> 
+<form class="col-xs-12 col-sm-6" action="/login" method="post">
   <h2>Login</h2>
+  <a href="/auth/github" class="btn btn-primary">GitHub</a>
+  <hr>
+  <h2>Login with E-mail</h2>
   <div class="form-group">
     <label class="sr-only" for="username">Email address</label>
     <input type="email" class="form-control" id="username" name="username" placeholder="Email">
@@ -14,4 +18,4 @@
     <a href="/signup">Create an Account &rarr;</a>
   </div>
 </form>
-<a href="/auth/github">Login with GitHub</a>
+</div>

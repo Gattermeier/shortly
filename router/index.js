@@ -12,7 +12,6 @@ module.exports = function(app, passport) {
 
   app.get('/',
     function(req, res) {
-      console.log(req.session);
       res.render('index', {
         messages: req.flash(),
         data: {},
@@ -38,11 +37,9 @@ module.exports = function(app, passport) {
 
   app.post('/links', util.isLoggedIn,
     function(req, res) {
-      console.log('POST on /links');
       var uri = req.body.url;
 
       if (!util.isValidUrl(uri)) {
-        console.log('Not a valid url: ', uri);
         return res.send(404);
       }
 
@@ -54,7 +51,6 @@ module.exports = function(app, passport) {
         } else {
           util.getUrlTitle(uri, function(err, title) {
             if (err) {
-              console.log('Error reading URL heading: ', err);
               return res.send(404);
             }
 
@@ -119,11 +115,7 @@ module.exports = function(app, passport) {
       successRedirect: '/',
       successFlash: true
     }),
-    function(req, res) {
-      console.log('Github authenticated, ', req.session.passport.user);
-      //  here it is loosing the session .. 
-      // res.redirect('/');
-    });
+    function(req, res) {});
 
   app.get('/logout', function(req, res) {
     req.logout();

@@ -1,8 +1,8 @@
 var LocalStrategy = require('passport-local').Strategy;
 var GitHubStrategy = require('passport-github2').Strategy;
 // MODIFY
-var GITHUB_CLIENT_ID = "249fd767df9892664c34"
-var GITHUB_CLIENT_SECRET = "94733207a40f34481cd195ac9144191417899f49";
+var GITHUB_CLIENT_ID = "EDIT HERE"
+var GITHUB_CLIENT_SECRET = "EDIT HERE";
 var CALLBACK_URL = "http://127.0.0.1:4568/auth/github/callback";
 
 var User = require('./models/user');
@@ -34,14 +34,11 @@ module.exports = function(passport) {
       username: username
     }).fetch().then(function(match) {
       if (match) {
-        console.log('user exists');
-
         done(null, false, {
           message: 'A user with this email address already exists.'
         });
 
       } else {
-        console.log('new user');
         util.encryptPWD(password, function(hash) {
           var user = new User({
             username: username,
@@ -89,15 +86,12 @@ module.exports = function(passport) {
         githubId: profile.id
       }).fetch().then(function(user) {
         if (user) {
-          console.log('Existing user: ', user)
           done(null, user);
         } else {
           var user = new User({
             githubId: profile.id
           });
-
           user.save().then(function(newUser) {
-            console.log('New user: ', newUser);
             done(null, newUser);
           })
         }
