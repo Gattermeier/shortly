@@ -5,10 +5,11 @@ var util = require('../lib/utility');
 module.exports = function(passport) {
 
   passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    done(null, user);
   });
 
-  passport.deserializeUser(function(username, done) {
+  passport.deserializeUser(function(user, done) {
+    var username = user.username;
     new User({
       username: username
     }).fetch().then(function(user) {
@@ -63,9 +64,14 @@ module.exports = function(passport) {
       }).fetch().then(function(user) {
         if (user) {
           console.log('user exists', user);
-          return done(null, user);
+          return done(null, user, {
+            message: 'user logged in'
+          });
         } else {
           console.log('unknown user');
+          return done(null, false, {
+            message: 'unknown user'
+          });
         }
       })
     }));
