@@ -1,10 +1,10 @@
 var session = require('express-session');
-var db = require('../app/config');
-var Users = require('../app/collections/users');
+// var db = require('../app/config');
+// var Users = require('../app/collections/users');
 var User = require('../app/models/user');
-var Links = require('../app/collections/links');
-var Link = require('../app/models/link');
-var Click = require('../app/models/click');
+// var Links = require('../app/collections/links');
+// var Link = require('../app/models/link');
+// var Click = require('../app/models/click');
 
 var util = require('../lib/utility');
 

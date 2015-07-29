@@ -1,3 +1,5 @@
+var mongoose = require('mongoose');
+var config = require('./config');
 var express = require('express');
 var partials = require('express-partials');
 var methodOverride = require('method-override');
@@ -47,6 +49,10 @@ app.use(express.static(__dirname + '/public'));
 router(app, passport);
 
 var port = 4568;
-app.listen(port, function() {
-  console.log('Shortly is listening on', port);
-});
+
+mongoose.connect(config, function(err) {
+  if (err) throw err;
+  app.listen(port, function() {
+    console.log('Shortly is listening on', port);
+  });
+})
